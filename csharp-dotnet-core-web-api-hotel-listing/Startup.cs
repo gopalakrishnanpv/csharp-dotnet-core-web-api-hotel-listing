@@ -1,5 +1,7 @@
 using csharp_dotnet_core_web_api_hotel_listing.Configurations;
 using csharp_dotnet_core_web_api_hotel_listing.Data;
+using csharp_dotnet_core_web_api_hotel_listing.IRepository;
+using csharp_dotnet_core_web_api_hotel_listing.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -37,11 +39,16 @@ namespace csharp_dotnet_core_web_api_hotel_listing
                 });
             });
 
-            services.AddAutoMapper(typeof(MapperConfig)),
+            services.AddAutoMapper(typeof(MapperConfig));
+
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "csharp_dotnet_core_web_api_hotel_listing", Version = "v1" });
             });
+
+            services.AddControllers().AddNewtonsoftJson(op =>
+            op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
