@@ -1,5 +1,8 @@
+using csharp_dotnet_core_web_api_hotel_listing.Configurations;
+using csharp_dotnet_core_web_api_hotel_listing.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,7 +22,10 @@ namespace csharp_dotnet_core_web_api_hotel_listing
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddDbContext<DatabaseContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("hotelListing"));
+            });
             services.AddControllers();
             services.AddCors(cors =>
             {
@@ -30,6 +36,8 @@ namespace csharp_dotnet_core_web_api_hotel_listing
                     .AllowAnyMethod();
                 });
             });
+
+            services.AddAutoMapper(typeof(MapperConfig)),
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "csharp_dotnet_core_web_api_hotel_listing", Version = "v1" });
